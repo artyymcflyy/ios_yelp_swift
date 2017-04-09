@@ -5,10 +5,13 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var filterButton: UIBarButtonItem!
     
     var businesses: [Business]!
     var categories: [String]?
     var dealsAreOn: Bool?
+    var distanceVal: Int?
+    var sortByVal: YelpSortMode?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,10 +22,12 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.estimatedRowHeight = 120
         
         let searchBar = UISearchBar()
+        searchBar.placeholder = "Restaurants"
         searchBar.sizeToFit()
         
         navigationItem.titleView = searchBar
         navigationItem.titleView?.backgroundColor = UIColor(colorLiteralRed: 232/255, green: 30/255, blue: 0/255, alpha: 1)
+        
         
         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
             
@@ -81,8 +86,16 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
             dealsAreOn = filters["deals"] as? Bool
         }
         
+        if filters["sort_by"] != nil{
+            sortByVal = YelpSortMode(rawValue: (filters["sort_by"] as? Int)!)
+        }
         
-        Business.searchWithTerm(term: "Restaurants", sort: nil, categories: categories, deals: dealsAreOn) { (businesses: [Business]!, error: Error!) -> Void in
+        if filters["distance"] != nil{
+            distanceVal = filters["distance"] as? Int
+        }
+        
+        
+        Business.searchWithTerm(term: "Restaurants", sort: sortByVal, categories: categories, distance: distanceVal!, deals: dealsAreOn) { (businesses: [Business]!, error: Error!) -> Void in
                 self.businesses = businesses
                 self.tableView.reloadData()
         }

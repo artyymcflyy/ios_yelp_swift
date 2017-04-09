@@ -12,14 +12,17 @@ import UIKit
     @objc func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String: AnyObject])
 }
 
-class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CategoriesCellDelegate, DealsCellDelegate{
+class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CategoriesCellDelegate, DealsCellDelegate, SortByCellDelegate, DistanceCellDelegate{
 
     @IBOutlet var tableView: UITableView!
     
     var delegate: FiltersViewControllerDelegate?
     var categories: [[String: String]]!
     var categorySwitchStates = [Int:Bool]()
+    var sortBySelection: [Int:Bool] = [0: true]
+    var distanceSelection: [Int:Bool] = [0: true]
     var dealsSwitchState = false
+    var miles: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +52,20 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
         for(row, isSelected) in categorySwitchStates{
             if isSelected{
                 selectedCategories.append(categories[row]["code"]!)
+            }
+        }
+        
+        for(row, isSelected) in sortBySelection{
+            if isSelected{
+                filters["sort_by"] = row as AnyObject
+            }
+        }
+        
+        for(row, isSelected) in distanceSelection{
+            if isSelected{
+                let value = yelpDistance()[row]
+                miles = yelpDistanceToMetersConversion(value)
+                filters["distance"] = miles as AnyObject
             }
         }
         
@@ -100,10 +117,64 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        if indexPath.section == 0{
+            return nil
+        }else if indexPath.section == 3{
+            return nil
+        }
+        return indexPath
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case 1:
-            print("section 1")
+            tableView.deselectRow(at: indexPath, animated: true)
+            let indexPath0 = NSIndexPath(row: 0, section: 1) as IndexPath
+            let indexPath1 = NSIndexPath(row: 1, section: 1) as IndexPath
+            let indexPath2 = NSIndexPath(row: 2, section: 1) as IndexPath
+            let indexPath3 = NSIndexPath(row: 3, section: 1) as IndexPath
+            let indexPath4 = NSIndexPath(row: 4, section: 1) as IndexPath
+            
+            let cell1 = tableView.cellForRow(at: indexPath0) as! DistanceCell
+            let cell2 = tableView.cellForRow(at: indexPath1) as! DistanceCell
+            let cell3 = tableView.cellForRow(at: indexPath2) as! DistanceCell
+            let cell4 = tableView.cellForRow(at: indexPath3) as! DistanceCell
+            let cell5 = tableView.cellForRow(at: indexPath4) as! DistanceCell
+            
+            
+            if indexPath.row == 0{
+                cell1.didTapCell()
+                cell2.unTapCell()
+                cell3.unTapCell()
+                cell4.unTapCell()
+                cell5.unTapCell()
+            }else if indexPath.row == 1{
+                cell1.unTapCell()
+                cell2.didTapCell()
+                cell3.unTapCell()
+                cell4.unTapCell()
+                cell5.unTapCell()
+            }else if indexPath.row == 2{
+                cell1.unTapCell()
+                cell2.unTapCell()
+                cell3.didTapCell()
+                cell4.unTapCell()
+                cell5.unTapCell()
+            }else if indexPath.row == 3{
+                cell1.unTapCell()
+                cell2.unTapCell()
+                cell3.unTapCell()
+                cell4.didTapCell()
+                cell5.unTapCell()
+            }else if indexPath.row == 4{
+                cell1.unTapCell()
+                cell2.unTapCell()
+                cell3.unTapCell()
+                cell4.unTapCell()
+                cell5.didTapCell()
+            }
         case 2:
             tableView.deselectRow(at: indexPath, animated: true)
             let indexPath0 = NSIndexPath(row: 0, section: 2) as IndexPath
@@ -131,7 +202,7 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             
         default:
-            print("default")
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
     
@@ -150,12 +221,14 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "DistanceCell", for: indexPath) as! DistanceCell
             cell.distanceLabel.text = yelpDistance()[indexPath.row]
+            cell.delegate = self
             
             return cell
         case 2:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "SortByCell", for: indexPath) as! SortByCell
             cell.sortByLabel.text = yelpSortBy()[indexPath.row]
+            cell.delegate = self
             
             return cell
         case 3:
@@ -177,6 +250,16 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
         dealsSwitchState = value
     }
     
+    func distanceCell(DistanceCell: DistanceCell, didChangeValue value: Bool) {
+        let indexPath = tableView.indexPath(for: DistanceCell)!
+        distanceSelection[indexPath.row] = value
+    }
+    
+    func sortByCell(SortByCell: SortByCell, didChangeValue value: Bool) {
+        let indexPath = tableView.indexPath(for: SortByCell)!
+        sortBySelection[indexPath.row] = value
+    }
+    
     func categoriesCell(CategoriesCell: CategoriesCell, didChangeValue value: Bool) {
         let indexPath = tableView.indexPath(for: CategoriesCell)!
         categorySwitchStates[indexPath.row] = value
@@ -184,6 +267,17 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func yelpDistance()->[String]{
         return ["Auto", "0.3","1","5", "20"]
+    }
+    
+    func yelpDistanceToMetersConversion(_ miles: String)->Int{
+        var numMiles = 0.0
+        if miles == "Auto"{
+            numMiles = 0.0
+        }else{
+            numMiles = Double(miles)!
+        }
+        
+        return Int(numMiles * 1609.344)
     }
     
     func yelpSortBy()->[String]{

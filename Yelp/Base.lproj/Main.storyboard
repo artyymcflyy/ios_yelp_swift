@@ -136,6 +136,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="filterButton" destination="MJw-Qw-Mse" id="Y13-XL-Jao"/>
                         <outlet property="tableView" destination="zjm-TH-eKp" id="LiM-dP-dJ4"/>
                     </connections>
                 </viewController>
@@ -211,9 +212,6 @@
                                                         <constraint firstAttribute="height" constant="36" id="C6H-TH-HFq"/>
                                                     </constraints>
                                                     <state key="normal" title="Button" image="circle2"/>
-                                                    <connections>
-                                                        <action selector="didTapRadioButton:" destination="63C-F9-qXc" eventType="touchUpInside" id="mYx-P3-Y0T"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -248,9 +246,6 @@
                                                         <constraint firstAttribute="height" constant="36" id="hdN-vK-xHS"/>
                                                     </constraints>
                                                     <state key="normal" title="Button" image="circle2"/>
-                                                    <connections>
-                                                        <action selector="didTapRadioButton:" destination="JfW-TK-K2J" eventType="touchUpInside" id="w7k-IF-Qc2"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
