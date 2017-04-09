@@ -8,6 +8,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     var businesses: [Business]!
     var categories: [String]?
+    var dealsAreOn: Bool?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,16 +69,20 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         filterViewController.delegate = self
         
-        filterViewController.savedCategories = categories
-        
-        
     }
     
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
         
-        categories = filters["categories"] as? [String]
+        if filters["categories"] != nil{
+            categories = filters["categories"] as? [String]
+        }
         
-        Business.searchWithTerm(term: "Restaurants", sort: nil, categories: categories, deals: nil) { (businesses: [Business]!, error: Error!) -> Void in
+        if filters["deals"] != nil{
+            dealsAreOn = filters["deals"] as? Bool
+        }
+        
+        
+        Business.searchWithTerm(term: "Restaurants", sort: nil, categories: categories, deals: dealsAreOn) { (businesses: [Business]!, error: Error!) -> Void in
                 self.businesses = businesses
                 self.tableView.reloadData()
         }

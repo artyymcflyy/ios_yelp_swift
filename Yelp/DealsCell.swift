@@ -8,10 +8,16 @@
 
 import UIKit
 
+@objc protocol DealsCellDelegate {
+    @objc func dealsCell(DealsCell: DealsCell, didChangeValue value: Bool)
+}
+
 class DealsCell: UITableViewCell {
 
     @IBOutlet var dealsLabel: UILabel!
     @IBOutlet var dealsSwitch: UISwitch!
+    
+    var delegate:DealsCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -20,8 +26,9 @@ class DealsCell: UITableViewCell {
 
     
     @IBAction func onToggle(_ sender: UISwitch) {
-        
+        delegate?.dealsCell(DealsCell: self, didChangeValue: dealsSwitch.isOn)
     }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
