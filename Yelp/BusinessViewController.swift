@@ -64,7 +64,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         
         if filtersCopy?["distance"] != nil{
-            distanceVal = filtersCopy?["distance"] as? Int
+            distanceVal = filtersCopy?["distance_row"] as? Int
         }else{
             distanceVal = 0
         }
@@ -76,9 +76,9 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
+    // MARK: - Search
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.setShowsCancelButton(true, animated: true)
-        navigationItem.rightBarButtonItem?.tintColor = .white
         return true
     }
     
@@ -95,6 +95,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
+    // MARK: - TableView
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if businesses != nil{
             return businesses.count
@@ -129,6 +130,21 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         let filterViewController = navigationView.topViewController as! FiltersViewController
         
         filterViewController.delegate = self
+        
+        if filtersCopy != nil{
+            if dealsAreOn != nil{
+                filterViewController.dealsSwitchState = dealsAreOn!
+            }
+            if categories != nil{
+                filterViewController.savedCategories = categories!
+            }
+            if filtersCopy?["sort_by"] != nil{
+                filterViewController.previousSortSelection = filtersCopy?["sort_by"] as? Int
+            }
+            if filtersCopy?["distance_row"] != nil{
+                filterViewController.previousDistanceSelection = filtersCopy?["distance_row"] as! Int
+            }
+        }
         
     }
     

@@ -19,10 +19,14 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
     var delegate: FiltersViewControllerDelegate?
     var categories: [[String: String]]!
     var categorySwitchStates = [Int:Bool]()
+    var savedCategories:[String]?
     var sortBySelection: [Int:Bool] = [0: true]
     var distanceSelection: [Int:Bool] = [0: true]
+    var selectedCategories = [String]()
     var dealsSwitchState = false
     var miles: Int = 0
+    var previousSortSelection: Int?
+    var previousDistanceSelection: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,16 +36,16 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.delegate = self
         tableView.dataSource = self
         
-        //recall previous state logic for categories
-//        if savedCategories != nil{
-//            for (index, arr) in categories.enumerated() {
-//                for item in savedCategories{
-//                    if arr["code"] == item{
-//                        switchStates[index] = true
-//                    }
-//                }
-//            }
-//        }
+        if savedCategories != nil{
+            for (index, arr) in categories.enumerated() {
+                for item in savedCategories!{
+                    if arr["code"] == item{
+                        categorySwitchStates[index] = true
+                    }
+                }
+            }
+        }
+        
         // Do any additional setup after loading the view.
     }
     
@@ -67,6 +71,7 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
                 let value = yelpDistance()[row]
                 miles = yelpDistanceToMetersConversion(value)
                 filters["distance"] = miles as AnyObject
+                filters["distance_row"] = row as AnyObject
             }
         }
         
@@ -146,30 +151,35 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             
             if indexPath.row == 0{
+                previousDistanceSelection = indexPath.row
                 cell1.didTapCell()
                 cell2.unTapCell()
                 cell3.unTapCell()
                 cell4.unTapCell()
                 cell5.unTapCell()
             }else if indexPath.row == 1{
+                previousDistanceSelection = indexPath.row
                 cell1.unTapCell()
                 cell2.didTapCell()
                 cell3.unTapCell()
                 cell4.unTapCell()
                 cell5.unTapCell()
             }else if indexPath.row == 2{
+                previousDistanceSelection = indexPath.row
                 cell1.unTapCell()
                 cell2.unTapCell()
                 cell3.didTapCell()
                 cell4.unTapCell()
                 cell5.unTapCell()
             }else if indexPath.row == 3{
+                previousDistanceSelection = indexPath.row
                 cell1.unTapCell()
                 cell2.unTapCell()
                 cell3.unTapCell()
                 cell4.didTapCell()
                 cell5.unTapCell()
             }else if indexPath.row == 4{
+                previousDistanceSelection = indexPath.row
                 cell1.unTapCell()
                 cell2.unTapCell()
                 cell3.unTapCell()
@@ -182,23 +192,26 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             let indexPath1 = NSIndexPath(row: 1, section: 2) as IndexPath
             let indexPath2 = NSIndexPath(row: 2, section: 2) as IndexPath
             
-            let cell1 = tableView.cellForRow(at: indexPath0) as! SortByCell
-            let cell2 = tableView.cellForRow(at: indexPath1) as! SortByCell
-            let cell3 = tableView.cellForRow(at: indexPath2) as! SortByCell
+            let cell1 = tableView.cellForRow(at: indexPath0) as? SortByCell
+            let cell2 = tableView.cellForRow(at: indexPath1) as? SortByCell
+            let cell3 = tableView.cellForRow(at: indexPath2) as? SortByCell
 
             
             if indexPath.row == 0{
-                cell1.didTapCell()
-                cell2.unTapCell()
-                cell3.unTapCell()
+                previousSortSelection = indexPath.row
+                cell1!.didTapCell()
+                cell2!.unTapCell()
+                cell3!.unTapCell()
             }else if indexPath.row == 1{
-                cell1.unTapCell()
-                cell2.didTapCell()
-                cell3.unTapCell()
+                previousSortSelection = indexPath.row
+                cell1!.unTapCell()
+                cell2!.didTapCell()
+                cell3!.unTapCell()
             }else if indexPath.row == 2{
-                cell1.unTapCell()
-                cell2.unTapCell()
-                cell3.didTapCell()
+                previousSortSelection = indexPath.row
+                cell1!.unTapCell()
+                cell2!.unTapCell()
+                cell3!.didTapCell()
             }
             
             
@@ -222,6 +235,11 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "DistanceCell", for: indexPath) as! DistanceCell
             cell.distanceLabel.text = yelpDistance()[indexPath.row]
+            
+            if indexPath.row == previousDistanceSelection{
+                cell.didTapCell()
+            }
+            
             cell.delegate = self
             
             return cell
@@ -229,6 +247,13 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "SortByCell", for: indexPath) as! SortByCell
             cell.sortByLabel.text = yelpSortBy()[indexPath.row]
+            
+            if indexPath.row == previousSortSelection{
+                cell.didTapCell()
+            }
+            
+            
+            
             cell.delegate = self
             
             return cell
@@ -252,13 +277,17 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func distanceCell(DistanceCell: DistanceCell, didChangeValue value: Bool) {
-        let indexPath = tableView.indexPath(for: DistanceCell)!
-        distanceSelection[indexPath.row] = value
+        let indexPath = tableView.indexPath(for: DistanceCell)
+        if indexPath != nil{
+            distanceSelection[(indexPath?.row)!] = value
+        }
     }
     
     func sortByCell(SortByCell: SortByCell, didChangeValue value: Bool) {
-        let indexPath = tableView.indexPath(for: SortByCell)!
-        sortBySelection[indexPath.row] = value
+        let indexPath = tableView.indexPath(for: SortByCell)
+        if indexPath != nil{
+            sortBySelection[(indexPath?.row)!] = value
+        }
     }
     
     func categoriesCell(CategoriesCell: CategoriesCell, didChangeValue value: Bool) {
