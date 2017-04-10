@@ -31,6 +31,7 @@ class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         tableView.delegate = self
         tableView.dataSource = self
+        
         //recall previous state logic for categories
 //        if savedCategories != nil{
 //            for (index, arr) in categories.enumerated() {

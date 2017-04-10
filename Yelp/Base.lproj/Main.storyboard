@@ -302,11 +302,13 @@
                     </view>
                     <navigationItem key="navigationItem" title="Filters" id="NPe-Nh-5xt">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="Jjy-ns-w1D">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="onCancel:" destination="ocs-XF-Gao" id="gIZ-EY-hRP"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Search" id="6OJ-QJ-Iqu">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="onSearch:" destination="ocs-XF-Gao" id="2bc-AQ-LhH"/>
                             </connections>
@@ -349,9 +351,14 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="OOw-Ko-Cpp" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ss6-4d-RRP">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ss6-4d-RRP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.90997409330000001" green="0.1169603718" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" red="0.90997409330000001" green="0.1169603718" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textShadowColor" red="0.90997409330000001" green="0.1169603718" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
