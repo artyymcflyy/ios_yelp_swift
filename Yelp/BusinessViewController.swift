@@ -64,7 +64,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         
         if filtersCopy?["distance"] != nil{
-            distanceVal = filtersCopy?["distance_row"] as? Int
+            distanceVal = filtersCopy?["distance"] as? Int
         }else{
             distanceVal = 0
         }
@@ -142,7 +142,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
                 filterViewController.previousSortSelection = filtersCopy?["sort_by"] as? Int
             }
             if filtersCopy?["distance_row"] != nil{
-                filterViewController.previousDistanceSelection = filtersCopy?["distance_row"] as! Int
+                filterViewController.previousDistanceSelection = filtersCopy?["distance_row"] as? Int
             }
         }
         
